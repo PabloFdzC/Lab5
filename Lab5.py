@@ -18,24 +18,27 @@ def interpolacion(image, N, pinta_primero):
       inicio = 0
     else:
       inicio = 1
-    for y in range(inicio, w, 2):
+    for y in range(w):
       mean = 0
-      for xVals in range(vals.shape[0]):
-        for yVals in range(vals.shape[1]):
-          if vals[xVals][yVals] != 0:
-            imgX = x+xVals-1
-            imgY = y+yVals-1
-            # Se ajusta el X y Y de la imagen
-            # original para obtener los valores
-            # correctos, en este caso los bordes
-            # toman el valor que tenga el punto
-            # que se revisa actualmente
-            if imgX < 0 or imgX >= h-1:
-              imgX = x
-            if imgY < 0 or imgY >= w-1:
-              imgY = y
-            mean += vals[xVals][yVals] * image[imgX][imgY]
-      wResult[x][y] = mean
+      if (inicio+y) % 2 == 0:
+        for xVals in range(vals.shape[0]):
+          for yVals in range(vals.shape[1]):
+            if vals[xVals][yVals] != 0:
+              imgX = x+xVals-1
+              imgY = y+yVals-1
+              # Se ajusta el X y Y de la imagen
+              # original para obtener los valores
+              # correctos, en este caso los bordes
+              # toman el valor que tenga el punto
+              # que se revisa actualmente
+              if imgX < 0 or imgX >= h-1:
+                imgX = x
+              if imgY < 0 or imgY >= w-1:
+                imgY = y
+              mean += vals[xVals][yVals] * image[imgX][imgY]
+        wResult[x][y] = mean
+      else:
+        wResult[x][y] = image[x][y]
     pinta_primero = not pinta_primero
   return wResult
 
