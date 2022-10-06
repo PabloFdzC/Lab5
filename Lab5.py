@@ -42,6 +42,26 @@ def interpolacion(image, N, pinta_primero):
     pinta_primero = not pinta_primero
   return wResult
 
+def resaltar_bordes(imagen, nombre_resultado, c):
+  (h, w) = imagen.shape[:2]
+  result = np.zeros((h, w, 3), dtype = "uint8")
+  # Se hace la imagen blur
+  imagen_blur = cv2.GaussianBlur(imagen, (3,3), 0)
+  # Se convierte la imagen a escala de grises
+  escala_de_grises = cv2.cvtColor(imagen_blur, cv2.COLOR_BGR2GRAY)
+  # Se calcula el laplaciano de la imagen con opencv.
+  laplaciano = cv2.Laplacian(escala_de_grises, cv2.CV_16S, 3)
+  # Se calcula el valor abosulto de los resultados
+  laplaciano = cv2.convertScaleAbs(laplaciano)
+  # Se realiza el proceso de resaltar los bordes de la imagen 
+  # utilizando el laplaciano.
+  for x in range(h):
+    for y in range(w):
+      result[x][y] = imagen[x][y] + c * laplaciano[x][y]
+  cv2.imwrite(nombre_resultado, result)
+
+
+
 lab1_imagen1 = cv2.imread("lab1_imagen1.jpg")
 
 # Punto 1 mapeo inverso e interpolación en
@@ -51,7 +71,27 @@ cv2.imwrite("lab5_imagen1.jpg", lab5_imagen1)
 
 lab1_imagen2 = cv2.imread("lab1_imagen2.jpg")
 
-# Punto 1 mapeo inverso e interpolación en
+# Punto 2 mapeo inverso e interpolación en
 # colindancia N=4
 lab5_imagen2 = interpolacion(lab1_imagen2, 4, True)
 cv2.imwrite("lab5_imagen2.jpg", lab5_imagen2)
+
+# Prueba de resaltado de bordes con c = 2
+resaltar_bordes(lab5_imagen1, "PruebaC2.jpg", 2)
+
+# Prueba de resaltado de bordes con c = 1
+resaltar_bordes(lab5_imagen1, "PruebaC1.jpg", 1)
+
+# Prueba de resaltado de bordes con c = 0.5
+resaltar_bordes(lab5_imagen1, "PruebaC05.jpg", 0.5)
+
+# Punto 5, mejora de nitidez utilizando la
+# amplificación de bordes por medio del
+# operador Laplaciano.
+resaltar_bordes(lab5_imagen1, "lab5_imagen3.jpg", 0.1)
+
+# Punto 5, mejora de nitidez utilizando la
+# amplificación de bordes por medio del
+# operador Laplaciano.
+resaltar_bordes(lab5_imagen2, "lab5_imagen4.jpg", 0.1)
+
